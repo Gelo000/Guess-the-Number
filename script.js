@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } else if (btnName === 'RESTART') {
         counter = 0;
+        counterHistory = 0; 
         chosenNumber = 0;
         myRandom1 = 0;
         enterNumber = '';
