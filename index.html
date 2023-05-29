@@ -51,6 +51,17 @@
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
       text-align: center;
     }
+
+    .guess-history {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .guess-history p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -61,6 +72,7 @@
     <label for="enter-guess" id="enter-guess-label"></label>
     <input type="number" id="enter-guess" class="form-control mb-3" placeholder="Enter your guess 1-50">
     <button id="guess-button" class="btn btn-primary play-button">PLAY</button>
+    <div class="guess-history"></div>
   </div>
 
   <script>
@@ -70,6 +82,7 @@
       const enterGuess = document.getElementById('enter-guess');
       const enterGuessLabel = document.getElementById('enter-guess-label');
       const guessButton = document.getElementById('guess-button');
+      const guessHistory = document.querySelector('.guess-history');
       let enterNumber = '';
       let btnName = '';
       let random1 = '';
@@ -79,6 +92,24 @@
       guessAttempts.textContent = 'Click \'PLAY\' to Start!';
       enterGuess.style.display = 'none';
       enterGuessLabel.style.display = 'none';
+
+      function appendGuessHistory(guess, indicator) {
+        const guessHistoryItem = document.createElement('p');
+        guessHistoryItem.textContent = `Guess: ${guess} (${indicator})`;
+        if (indicator === 'Correct') {
+          guessHistoryItem.style.color = 'green';
+          guessHistoryItem.style.fontWeight = 'bold';
+        }
+        else if(indicator === 'Too High'){
+          guessHistoryItem.style.color = 'red';
+          guessHistoryItem.style.fontWeight = 'normal';
+        }
+        else if(indicator === 'Too Low'){
+          guessHistoryItem.style.color = 'gray';
+          guessHistoryItem.style.fontWeight = 'normal';
+        }
+        guessHistory.appendChild(guessHistoryItem);
+      }
 
       guessButton.addEventListener('click', function() {
         enterNumber = enterGuess.value;
@@ -93,6 +124,7 @@
           guessButton.textContent = 'GUESS!';
           guessNumberResult.textContent = 'Please enter a number';
           guessAttempts.textContent = 'No attempts yet';
+          guessHistory.innerHTML = '';
         } else if (enterNumber === '' && btnName === 'GUESS!') {
           alert('Enter a number first');
         } else if (enterNumber !== '' && btnName === 'GUESS!') {
@@ -100,11 +132,13 @@
 
           if (chosenNumber > myRandom1 && chosenNumber <= 50) {
             guessNumberResult.textContent = 'Too High. Try Again';
+            appendGuessHistory(chosenNumber, 'Too High');
             counter++;
             enterGuess.value = '';
             guessAttempts.textContent = 'Number of Attempt(s): ' + counter;
           } else if (chosenNumber < myRandom1 && chosenNumber > 0) {
             guessNumberResult.textContent = 'Too Low. Try Again';
+            appendGuessHistory(chosenNumber, 'Too Low');
             counter++;
             enterGuess.value = '';
             guessAttempts.textContent = 'Number of Attempt(s): ' + counter;
@@ -113,6 +147,7 @@
             enterGuess.value = '';
           } else {
             guessNumberResult.textContent = 'You Guessed the Number!';
+            appendGuessHistory(chosenNumber, 'Correct');
             counter++;
             guessNumberResult.textContent = 'You Got it in ' + counter + ' attempt(s)';
             guessAttempts.textContent = "Click 'RESTART' to play again";
@@ -136,6 +171,7 @@
           guessNumberResult.style.display = 'none';
           enterGuess.style.display = 'none';
           enterGuess.style.display = 'none';
+          guessHistory.innerHTML = '';
         }
       });
 
