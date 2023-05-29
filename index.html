@@ -58,6 +58,8 @@
       margin-top: 20px;
       text-align: left;
       padding: 10px;
+      max-height: 200px;
+      height: 200px;
     }
 
     .guess-history-card p {
@@ -80,6 +82,17 @@
       text-align: center;
       font-size: 14px;
       color: #555;
+    }
+
+    #guess-history {
+      max-height: 130px;
+      height: 100%;
+      overflow-y: auto;
+      text-align: center;
+    }
+    .history-item.latest {
+      font-size: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -122,6 +135,7 @@
       let btnName = '';
       let random1 = '';
       let counter = 0;
+      let counterHistory = 0;
       let chosenNumber = 0;
       let myRandom1 = 0;
       guessAttempts.textContent = 'Click \'PLAY\' to Start!';
@@ -131,9 +145,10 @@
 
       function appendGuessHistory(guess, indicator) {
         noHistoryText.style.display = 'none';
+        counterHistory++; // Increment the counter
         const guessHistoryItem = document.createElement('p');
         const indicatorIcon = document.createElement('i');
-        guessHistoryItem.textContent = `Guess: ${guess} (${indicator}) `;
+        guessHistoryItem.textContent = `${counterHistory}.) Guess: ${guess} (${indicator}) `; // Include the counter value
         if (indicator === 'Correct') {
           guessHistoryItem.style.color = 'green';
           guessHistoryItem.style.fontWeight = 'bold';
@@ -147,10 +162,21 @@
           guessHistoryItem.style.fontWeight = 'normal';
           indicatorIcon.classList.add('fas', 'fa-arrow-down', 'text-secondary');
         }
-        guessHistoryItem.appendChild(indicatorIcon);
-        guessHistory.appendChild(guessHistoryItem);
+        
+        guessHistoryItem.classList.add('history-item'); // Add a class to the history item
 
+        guessHistoryItem.appendChild(indicatorIcon);
+        guessHistory.prepend(guessHistoryItem);
+
+        // Remove the class from previous history items
+        const previousItems = document.querySelectorAll('.history-item');
+        previousItems.forEach(item => item.classList.remove('latest'));
+        
+        // Add the class to the latest history item
+        guessHistoryItem.classList.add('latest');
       }
+
+
 
       guessButton.addEventListener('click', function() {
         enterNumber = enterGuess.value;
